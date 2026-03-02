@@ -1,0 +1,687 @@
+{
+  "info": {
+    "_postman_id": "jobfair-collection-v4",
+    "name": "JobFair_Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. Prerequisite - Create Admin if not exists",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Accept both 200 (created) and 400 (already exists)",
+              "pm.test('Admin registration attempted', function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 400]);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"Admin\", \"email\": \"admin@gmail.com\", \"password\": \"password123\", \"telephone\": \"123456\", \"role\": \"admin\"}"
+        },
+        "url": {"raw": "{{URL}}/api/v1/auth/register", "host": ["{{URL}}"], "path": ["api", "v1", "auth", "register"]}
+      }
+    },
+    {
+      "name": "1. Admin Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Admin login success - Status 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response has token', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    pm.expect(jsonData.token).to.exist;",
+              "    pm.environment.set('admin_token', jsonData.token);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\": \"admin@gmail.com\", \"password\": \"password123\"}"
+        },
+        "url": {"raw": "{{URL}}/api/v1/auth/login", "host": ["{{URL}}"], "path": ["api", "v1", "auth", "login"]}
+      }
+    },
+    {
+      "name": "2. Create Company",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Company created - Status 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test('Response has company ID', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    pm.expect(jsonData.data._id).to.exist;",
+              "    pm.environment.set('companyId', jsonData.data._id);",
+              "    console.log('Company ID: ' + jsonData.data._id);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{admin_token}}"}]},
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"Company {{$timestamp}}\", \"address\": \"123 Test Street, Bangkok\", \"website\": \"https://test.com\", \"telephone\": \"021234567\", \"description\": \"Test company\", \"businessType\": \"Technology\", \"size\": \"Large\"}"
+        },
+        "url": {"raw": "{{URL}}/api/v1/companies", "host": ["{{URL}}"], "path": ["api", "v1", "companies"]}
+      }
+    },
+    {
+      "name": "3. Create Session 1 (May 11, 2022)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Session 1 created - Status 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test('Response has session ID', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    pm.expect(jsonData.data._id).to.exist;",
+              "    pm.environment.set('sessionId1', jsonData.data._id);",
+              "    console.log('Session 1 ID: ' + jsonData.data._id);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{admin_token}}"}]},
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"company\": \"{{companyId}}\", \"startTime\": \"2022-05-11T09:00:00.000Z\", \"endTime\": \"2022-05-11T10:00:00.000Z\", \"jobPosition\": \"Software Engineer\", \"jobDescription\": \"Full stack developer\", \"status\": \"available\"}"
+        },
+        "url": {"raw": "{{URL}}/api/v1/sessions", "host": ["{{URL}}"], "path": ["api", "v1", "sessions"]}
+      }
+    },
+    {
+      "name": "4. Create Session 2 (May 12, 2022)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Session 2 created - Status 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test('Response has session ID', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    pm.expect(jsonData.data._id).to.exist;",
+              "    pm.environment.set('sessionId2', jsonData.data._id);",
+              "    console.log('Session 2 ID: ' + jsonData.data._id);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{admin_token}}"}]},
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"company\": \"{{companyId}}\", \"startTime\": \"2022-05-12T09:00:00.000Z\", \"endTime\": \"2022-05-12T10:00:00.000Z\", \"jobPosition\": \"Backend Developer\", \"jobDescription\": \"Node.js developer\", \"status\": \"available\"}"
+        },
+        "url": {"raw": "{{URL}}/api/v1/sessions", "host": ["{{URL}}"], "path": ["api", "v1", "sessions"]}
+      }
+    },
+    {
+      "name": "5. Create Session 3 (May 13, 2022)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Session 3 created - Status 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test('Response has session ID', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    pm.expect(jsonData.data._id).to.exist;",
+              "    pm.environment.set('sessionId3', jsonData.data._id);",
+              "    console.log('Session 3 ID: ' + jsonData.data._id);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{admin_token}}"}]},
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"company\": \"{{companyId}}\", \"startTime\": \"2022-05-13T09:00:00.000Z\", \"endTime\": \"2022-05-13T10:00:00.000Z\", \"jobPosition\": \"Frontend Developer\", \"jobDescription\": \"React developer\", \"status\": \"available\"}"
+        },
+        "url": {"raw": "{{URL}}/api/v1/sessions", "host": ["{{URL}}"], "path": ["api", "v1", "sessions"]}
+      }
+    },
+    {
+      "name": "6. Cleanup - Delete Old User Bookings",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Try to login as existing user and delete their bookings",
+              "pm.sendRequest({",
+              "    url: pm.environment.get('URL') + '/api/v1/auth/login',",
+              "    method: 'POST',",
+              "    header: { 'Content-Type': 'application/json' },",
+              "    body: {",
+              "        mode: 'raw',",
+              "        raw: JSON.stringify({ email: 'testuser@gmail.com', password: 'password123' })",
+              "    }",
+              "}, function (err, response) {",
+              "    if (!err && response.code === 200) {",
+              "        var token = response.json().token;",
+              "        // Get all bookings",
+              "        pm.sendRequest({",
+              "            url: pm.environment.get('URL') + '/api/v1/bookings',",
+              "            method: 'GET',",
+              "            header: { 'Authorization': 'Bearer ' + token }",
+              "        }, function (err, res) {",
+              "            if (!err && res.code === 200) {",
+              "                var bookings = res.json().data || [];",
+              "                bookings.forEach(function(booking) {",
+              "                    pm.sendRequest({",
+              "                        url: pm.environment.get('URL') + '/api/v1/bookings/' + booking._id,",
+              "                        method: 'DELETE',",
+              "                        header: { 'Authorization': 'Bearer ' + token }",
+              "                    });",
+              "                });",
+              "            }",
+              "        });",
+              "    }",
+              "});",
+              "pm.test('Cleanup attempted', function () { pm.expect(true).to.be.true; });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {"raw": "{{URL}}/api/v1/health", "host": ["{{URL}}"], "path": ["api", "v1", "health"]}
+      }
+    },
+    {
+      "name": "7. User Registration",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "// Generate unique email to avoid duplicates",
+              "var uniqueEmail = 'user' + Date.now() + '@gmail.com';",
+              "pm.environment.set('user_email', uniqueEmail);",
+              "pm.environment.set('uniqueEmail', uniqueEmail);",
+              "console.log('Generated email: ' + uniqueEmail);"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('User registered - Status 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response has token', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    pm.expect(jsonData.token).to.exist;",
+              "    pm.environment.set('user_token', jsonData.token);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"Test User\", \"email\": \"{{uniqueEmail}}\", \"password\": \"password123\", \"telephone\": \"0812345678\", \"role\": \"user\"}"
+        },
+        "url": {"raw": "{{URL}}/api/v1/auth/register", "host": ["{{URL}}"], "path": ["api", "v1", "auth", "register"]}
+      }
+    },
+    {
+      "name": "8. Validation Check",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Validation error - Status 400', function () {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"NoEmail\", \"password\": \"123\"}"
+        },
+        "url": {"raw": "{{URL}}/api/v1/auth/register", "host": ["{{URL}}"], "path": ["api", "v1", "auth", "register"]}
+      }
+    },
+    {
+      "name": "9. View Companies",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('View companies - Status 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {"raw": "{{URL}}/api/v1/companies", "host": ["{{URL}}"], "path": ["api", "v1", "companies"]}
+      }
+    },
+    {
+      "name": "10. View Sessions",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('View sessions - Status 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {"raw": "{{URL}}/api/v1/sessions", "host": ["{{URL}}"], "path": ["api", "v1", "sessions"]}
+      }
+    },
+    {
+      "name": "11. User Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('User login success - Status 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response has token', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    pm.expect(jsonData.token).to.exist;",
+              "    pm.environment.set('user_token', jsonData.token);",
+              "    console.log('User token set for: ' + pm.environment.get('user_email'));",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\": \"{{user_email}}\", \"password\": \"password123\"}"
+        },
+        "url": {"raw": "{{URL}}/api/v1/auth/login", "host": ["{{URL}}"], "path": ["api", "v1", "auth", "login"]}
+      }
+    },
+    {
+      "name": "11. Create Booking #1 (May 11)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Booking #1 created - Status 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test('Response has booking ID', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    pm.expect(jsonData.data._id).to.exist;",
+              "    pm.environment.set('bookingId1', jsonData.data._id);",
+              "    console.log('Booking #1 ID: ' + jsonData.data._id);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{user_token}}"}]},
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"session\": \"{{sessionId1}}\"}"
+        },
+        "url": {"raw": "{{URL}}/api/v1/bookings", "host": ["{{URL}}"], "path": ["api", "v1", "bookings"]}
+      }
+    },
+    {
+      "name": "12. Create Booking #2 (May 12)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Booking #2 created - Status 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test('Response has booking ID', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    pm.expect(jsonData.data._id).to.exist;",
+              "    pm.environment.set('bookingId2', jsonData.data._id);",
+              "    console.log('Booking #2 ID: ' + jsonData.data._id);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{user_token}}"}]},
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"session\": \"{{sessionId2}}\"}"
+        },
+        "url": {"raw": "{{URL}}/api/v1/bookings", "host": ["{{URL}}"], "path": ["api", "v1", "bookings"]}
+      }
+    },
+    {
+      "name": "13. Create Booking #3 (May 13)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Booking #3 created - Status 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test('Response has booking ID', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    pm.expect(jsonData.data._id).to.exist;",
+              "    pm.environment.set('bookingId3', jsonData.data._id);",
+              "    console.log('Booking #3 ID: ' + jsonData.data._id);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{user_token}}"}]},
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"session\": \"{{sessionId3}}\"}"
+        },
+        "url": {"raw": "{{URL}}/api/v1/bookings", "host": ["{{URL}}"], "path": ["api", "v1", "bookings"]}
+      }
+    },
+    {
+      "name": "14. Check Max 3 Bookings",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Max limit reached - Status 400', function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "pm.test('Error message shows limit exceeded', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(false);",
+              "    pm.expect(jsonData.msg).to.eql('You can only book 3 sessions');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{user_token}}"}]},
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"session\": \"{{sessionId1}}\"}"
+        },
+        "url": {"raw": "{{URL}}/api/v1/bookings", "host": ["{{URL}}"], "path": ["api", "v1", "bookings"]}
+      }
+    },
+    {
+      "name": "15. User View Own Bookings",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('View own bookings - Status 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('User has 3 bookings', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.count).to.eql(3);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{user_token}}"}]},
+        "method": "GET",
+        "header": [],
+        "url": {"raw": "{{URL}}/api/v1/bookings", "host": ["{{URL}}"], "path": ["api", "v1", "bookings"]}
+      }
+    },
+    {
+      "name": "16. User Edit Own Booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Edit booking - Status 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{user_token}}"}]},
+        "method": "PUT",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"bookingDate\": \"2022-05-10T00:00:00Z\"}"
+        },
+        "url": {"raw": "{{URL}}/api/v1/bookings/{{bookingId1}}", "host": ["{{URL}}"], "path": ["api", "v1", "bookings", "{{bookingId1}}"]}
+      }
+    },
+    {
+      "name": "17. User Delete Booking #1",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Delete booking #1 - Status 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{user_token}}"}]},
+        "method": "DELETE",
+        "header": [],
+        "url": {"raw": "{{URL}}/api/v1/bookings/{{bookingId1}}", "host": ["{{URL}}"], "path": ["api", "v1", "bookings", "{{bookingId1}}"]}
+      }
+    },
+    {
+      "name": "18. User Delete Booking #2",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Delete booking #2 - Status 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{user_token}}"}]},
+        "method": "DELETE",
+        "header": [],
+        "url": {"raw": "{{URL}}/api/v1/bookings/{{bookingId2}}", "host": ["{{URL}}"], "path": ["api", "v1", "bookings", "{{bookingId2}}"]}
+      }
+    },
+    {
+      "name": "19. Admin View Any Booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Admin view all bookings - Status 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Should show remaining bookings (may include old data)', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.count).to.be.at.least(1);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{admin_token}}"}]},
+        "method": "GET",
+        "header": [],
+        "url": {"raw": "{{URL}}/api/v1/bookings", "host": ["{{URL}}"], "path": ["api", "v1", "bookings"]}
+      }
+    },
+    {
+      "name": "20. Admin Delete Booking #3",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Admin delete booking #3 - Status 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{admin_token}}"}]},
+        "method": "DELETE",
+        "header": [],
+        "url": {"raw": "{{URL}}/api/v1/bookings/{{bookingId3}}", "host": ["{{URL}}"], "path": ["api", "v1", "bookings", "{{bookingId3}}"]}
+      }
+    },
+    {
+      "name": "21. User Logout",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Logout success - Status 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{user_token}}"}]},
+        "method": "GET",
+        "header": [],
+        "url": {"raw": "{{URL}}/api/v1/auth/logout", "host": ["{{URL}}"], "path": ["api", "v1", "auth", "logout"]}
+      }
+    }
+  ]
+}
